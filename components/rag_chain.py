@@ -1,7 +1,7 @@
 # components/rag_chain.py
 from langchain_openai import OpenAIEmbeddings
 from langchain_anthropic import ChatAnthropic
-# from langchain_anthropic import ChatAnthropic  # Only new import needed
+from pydantic import ConfigDict
 
 from langchain_community.vectorstores import Chroma
 from langchain.prompts import ChatPromptTemplate
@@ -12,6 +12,8 @@ from pathlib import Path
 import os  # Added for environment variable access
 
 class RAGChain:
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    
     def __init__(self):
         self.persist_directory = "./chroma_db"
         self.collection_name = "hepatology_docs"
