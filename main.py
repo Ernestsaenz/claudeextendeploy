@@ -12,8 +12,7 @@ from components.rag_chain import RAGChain
 load_dotenv()
 
 # Verify environment variables
-# required_vars = ['OPENAI_API_KEY', 'ANTHROPIC_API_KEY']
-required_vars = ['OPENAI_API_KEY', 'OPENROUTER_API_KEY']
+required_vars = ['OPENAI_API_KEY', 'ANTHROPIC_API_KEY']
 missing_vars = [var for var in required_vars if not os.getenv(var)]
 if missing_vars:
     raise RuntimeError(f"Missing required environment variables: {', '.join(missing_vars)}")
@@ -81,7 +80,7 @@ async def query_rag(question: Question):
 @app.get("/")
 async def root():
     """Root endpoint"""
-    return {"message": "RAG System API is running. Visit /docs for documentation."}
+    return {"message": "Coeliac Disease Expert System API is running with Claude 3.7 Sonnet."}
 
 if __name__ == "__main__":
     import uvicorn
