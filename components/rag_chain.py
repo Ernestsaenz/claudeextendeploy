@@ -1,7 +1,7 @@
 # components/rag_chain.py
 from langchain_openai import OpenAIEmbeddings
 from langchain_anthropic import ChatAnthropic
-from pydantic import ConfigDict
+from pydantic import BaseModel, ConfigDict
 
 from langchain_community.vectorstores import Chroma
 from langchain.prompts import ChatPromptTemplate
@@ -11,8 +11,8 @@ import time
 from pathlib import Path
 import os  # Added for environment variable access
 
-class RAGChain:
-    model_config = ConfigDict(arbitrary_types_allowed=True)
+class RAGChain(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True, populate_by_name=True)
     
     def __init__(self):
         self.persist_directory = "./chroma_db"
@@ -22,7 +22,7 @@ class RAGChain:
         self.llm = ChatAnthropic(
             model_name="claude-3-7-sonnet-latest",
             max_tokens=6000,
-            model_kwargs={"thinking": {"type": "enabled", "budget_tokens": 12000}},
+            thinking={"type": "enabled", "budget_tokens": 12000},
             anthropic_api_key=os.getenv("ANTHROPIC_API_KEY")
         )
         
