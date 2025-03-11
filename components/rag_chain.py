@@ -1,7 +1,8 @@
+
 # components/rag_chain.py
 from langchain_openai import OpenAIEmbeddings
 from langchain_anthropic import ChatAnthropic
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from langchain_community.vectorstores import Chroma
 from langchain.prompts import ChatPromptTemplate
@@ -14,7 +15,16 @@ import os  # Added for environment variable access
 class RAGChain(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True, populate_by_name=True)
     
-    def __init__(self):
+    # Define fields for Pydantic v2
+    persist_directory: str = Field(default="./chroma_db")
+    collection_name: str = Field(default="hepatology_docs")
+    llm: any = Field(default=None)
+    embedding_function: any = Field(default=None)
+    db: any = Field(default=None)
+    qa_chain: any = Field(default=None)
+    
+    def __init__(self, **data):
+        super().__init__(**data)
         self.persist_directory = "./chroma_db"
         self.collection_name = "hepatology_docs"
         # Only change is here - replacing ChatOpenAI with ChatAnthropic
@@ -127,7 +137,7 @@ class RAGChain(BaseModel):
           - Evidence-based management strategies and treatment protocols (e.g., strict lifelong gluten-free diet, management of refractory CD)
           - Patient education, multidisciplinary care, and monitoring (including nutritional assessments and follow-up care)
           - Recent advancements (e.g., non-invasive adherence tests, emerging therapies, and updated guideline implications)
-          - **Medication Safety:** Verify that any medication recommendations are consistent with the FDA’s safety guidelines provided in the document labeled MED-FDA (medication_warnings_before_administration_total.txt).
+          - **Medication Safety:** Verify that any medication recommendations are consistent with the FDA's safety guidelines provided in the document labeled MED-FDA (medication_warnings_before_administration_total.txt).
 
         Workflow must be:
         1. **Step-by-Step Reasoning:**
@@ -163,8 +173,6 @@ class RAGChain(BaseModel):
         {question}
         """
 
-
-        
         # Your existing template
         prompt = ChatPromptTemplate.from_template(template)
 
@@ -179,14 +187,6 @@ class RAGChain(BaseModel):
         )
 
         print("RAG chain setup complete!")
-
-#    @staticmethod
-#    def format_documents(documents):
-#        """Format retrieved documents with clear separation"""
-#        formatted_docs = []
-#        for i, doc in enumerate(documents, 1):
-#            formatted_docs.append(f"Document {i}:\n{doc.page_content}\n")
-#        return "\n".join(formatted_docs)
 
     @staticmethod
     def format_documents(documents):
