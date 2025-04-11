@@ -1,12 +1,14 @@
-# main.py
+
 import os
 from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic.v1 import BaseModel  # Use v1 for compatibility
 from components.data_processor import DataProcessor
 from components.rag_chain import RAGChain
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 
 # Load environment variables
 load_dotenv()
@@ -49,20 +51,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Serve static files
-from fastapi.staticfiles import StaticFiles
-from pathlib import Path
-
 # Create static directory if it doesn't exist
 Path("static").mkdir(exist_ok=True)
 
+# Serve static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
-@app.get("/ui")
-async def ui():
-    """Redirect to the UI"""
-    from fastapi.responses import FileResponse
-    return FileResponse("static/index.html")
 
 # Define request model
 class Question(BaseModel):
@@ -84,4 +77,5 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8080, workers=4, proxy_headers=True)
+    port = int(os.environ.get("PORT", 8080))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, workers=4)

@@ -22,3 +22,5 @@ langchain-anthropic==0.1.1
 #chromadb==0.4.22
 anthropic
 #pydantic==2.6.1
+uvicorn[standard]
+uvicorn[standard]
