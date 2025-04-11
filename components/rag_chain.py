@@ -31,7 +31,7 @@ class RAGChain(BaseModel):
 
         self.llm = ChatAnthropic(
             model_name="claude-3-7-sonnet-latest",
-            max_tokens=6000,
+            max_tokens=16000,
             thinking={"type": "enabled", "budget_tokens": 12000},
             anthropic_api_key=os.getenv("ANTHROPIC_API_KEY")
         )
